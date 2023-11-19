@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+            RELEASE_BRANCH = 'release'
+    }
     stages {
         stage ('GIT Checkout'){
             steps {
