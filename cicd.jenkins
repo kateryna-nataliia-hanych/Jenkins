@@ -3,8 +3,9 @@ pipeline {
     stages {
         stage ('GIT Checkout'){
             steps {
-                git changelog: false, poll: false, url: 'https://github.com/kateryna-nataliia-hanych/CICD.git'
-            }
+                // Checkout the develop branch
+                    checkout([$class: 'GitSCM', branches: [[name: "*/develop"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/kateryna-nataliia-hanych/Jenkins.git']]])
+                }
         }
 
         stage('build') {
