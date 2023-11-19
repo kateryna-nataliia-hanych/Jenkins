@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    stages {
+        stage ('GIT Checkout'){
+            steps {
+                git changelog: false, poll: false, url: 'https://github.com/kateryna-nataliia-hanych/CICD.git'
+            }
+        }
+
+        stage('build') {
+            steps {
+                withPythonEnv('python3') {
+                        sh 'pip install -r requirements.txt'
+                    }
+            }
+        }
+        stage ('Test'){
+            steps {
+                withPythonEnv('python3') {
+                   sh 'pytest test_person_address_table.py'
+                   // sh 'python3 test.py'
+                }
+            }
+        }
+        stage('Deploy to Release') {
+            steps {
+                script {
+                    def currentBranch = env.GIT_BRANCH ?: 'master'
+
+                    sh "git checkout -B ${RELEASE_BRANCH} origin/${RELEASE_BRANCH} || git checkout -b ${RELEASE_BRANCH}"
+
+                    sh "git merge origin/${currentBranch}"
+
+                    sh 'git push origin ${RELEASE_BRANCH}'
+                }
+            }
+        }
+    }
+}
